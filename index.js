@@ -31,29 +31,42 @@ a1.left = b1;
 a1.right = c1;
 b1.left = d1;
 b1.right = e1;
-c1.left = f1;
-// c1.right = g1;
+c1.left = g1;
+c1.right = g1;
 
 /**
- * 二叉树的比较
+ * 
  * @param {*} root1 
  * @param {*} root2 
+ * @param {*} diffList diff记录
  */
-function compareTree(root1, root2){
-    if(root1 == root2){
-        return true
+function diffTree(root1, root2, diffList) {
+    if (root1 == root2) {
+        return diffList;
+    } else if (root1 == null && root2) {
+        diffList.push({
+            type: '新增',
+            origin: null,
+            now: root2
+        })
+    } else if (root1 && root2 == null) {
+        diffList.push({
+            type: '删除',
+            origin: root1,
+            now: null
+        })
+    } else if (root1.value !== root2.value) {
+        diffList.push({
+            type: '修改',
+            origin: root1,
+            now: root2
+        });
+        diffTree(root1.left, root2.left, diffList);
+        diffTree(root1.right, root2.right, diffList);
     }
-    if(root1 == null && root2 || root && root2 == null){
-        return false;
-    }
-    if(root1.value !== root2.value){
-        return false;
-    }
-    // 这里是没有考虑左子树和右子树的位置的
-    const leftBool = compareTree(root1.left, root2.left);
-    const rightBool = compareTree(root1.right, root2.right);
-    return leftBool && rightBool;
+    diffTree(root1.left, root2.left, diffList);
+    diffTree(root1.right, root2.right, diffList);
 }
-
-
-console.log(compareTree(a, a1));
+const diffList = [];
+diffTree(a, a1, diffList);
+console.log(diffList);
