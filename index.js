@@ -19,24 +19,41 @@ b.right = e;
 c.left = f;
 c.right = g;
 
+const a1 = new Node('a');
+const b1 = new Node('b');
+const c1 = new Node('c');
+const d1 = new Node('d');
+const e1 = new Node('e');
+const f1 = new Node('f');
+const g1 = new Node('g');
+
+a1.left = b1;
+a1.right = c1;
+b1.left = d1;
+b1.right = e1;
+c1.left = f1;
+// c1.right = g1;
+
 /**
- * 广度优先搜索
- * @param {*} rootList
- * @param {*} value 
+ * 二叉树的比较
+ * @param {*} root1 
+ * @param {*} root2 
  */
-function breadthSearch(rootList, value){
-    if(root == null || rootList.length == 0 || value == null){
-        return;
+function compareTree(root1, root2){
+    if(root1 == root2){
+        return true
     }
-    const arr = [];
-    for(let i = 0; i < rootList.length; i++){
-        if(rootList[i] && rootList[i].value === value){
-            return rootList[i];
-        }
-        arr.push(rootList[i].left);
-        arr.push(rootList[i].right);
+    if(root1 == null && root2 || root && root2 == null){
+        return false;
     }
-    return breadthSearch(arr, value);
+    if(root1.value !== root2.value){
+        return false;
+    }
+    // 这里是没有考虑左子树和右子树的位置的
+    const leftBool = compareTree(root1.left, root2.left);
+    const rightBool = compareTree(root1.right, root2.right);
+    return leftBool && rightBool;
 }
 
-console.log(breadthSearch([a], 'g'));
+
+console.log(compareTree(a, a1));
