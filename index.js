@@ -1,59 +1,112 @@
-const arr = [2, 4, 6, 1, 3, 5, 8, 9, 7];
+function Node(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+}
 
-// 快速排序 首先选第一个元素为基准，建立两个指针，左指针指向第二个元素，右指针指向最后一个元素
-// 从左向右，寻找大于基准的元素，停止
-// 从右向左，寻找小于基准的元素，停止
-// 交换元素位置，指针接着运动，直到左指针大于右指针
-// 将基准元素与最终指针指向的元素进行交换
-// 以目前基准元素作为分隔，左侧和右侧数组继续之前的操作
+const a = new Node('a');
+const b = new Node('b');
+const c = new Node('c');
+const d = new Node('d');
+const e = new Node('e');
+const f = new Node('f');
+const g = new Node('g');
+
+a.left = b;
+a.right = c;
+b.left = d;
+b.right = e;
+c.left = f;
+c.right = g;
+
 /**
- * 交换
- * @param {*} arr 
- * @param {*} i 
- * @param {*} j 
+ * 前序遍历
+ * @param {*} root 
  */
-function exchange(arr, i, j) {
-    let temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+function sort1(root) {
+    if (!root) {
+        return;
+    }
+    console.log(root.value);
+    sort1(root.left);
+    sort1(root.right);
 }
 
 /**
- * 排序 左闭右开
- * @param {*} arr 
- * @param {*} begin 
- * @param {*} end 
+ * 中序遍历
+ * @param {*} root 
  */
-function quickSort(arr, begin, end) {
-    if (!arr || arr.length <= 1) {
+function sort2(root) {
+    if (!root) {
         return;
     }
-    // 子数组至少有两项
-    if (end - begin <= 1) {
-        return;
-    }
-    const key = arr[begin];
-    let left = begin;
-    let right = end;
-    do {
-        do left++;
-        while (left < right && arr[left] < key)
-        do right--;
-        while (left < right && arr[right] > key)
-        if (left < right) {
-            exchange(arr, left, right);
-        }
-    } while (left < right)
-    // 判断需要交换基准的位置
-    // 左右指针最终可能的情况，
-    // 相等：最后一次没找到可以交换的
-    // 不相等：最后一次找到可以交换的，交换后，left>right 或者是一次都没找到
-    const swapPoint = left === right ? right - 1 : right;
-    exchange(arr, begin, swapPoint);
-    quickSort(arr, begin, swapPoint);
-    quickSort(arr, swapPoint + 1, end);
-
+    sort2(root.left);
+    console.log(root.value);
+    sort2(root.right);
 }
 
-quickSort(arr, 0, arr.length);
-console.log(arr);
+/**
+ * 后续遍历
+ * @param {*} root 
+ */
+function sort3(root) {
+    if (!root) {
+        return;
+    }
+    sort3(root.left);
+    sort3(root.right);
+    console.log(root.value);
+}
+
+// sort1(a); a b d e c f g
+// sort2(a); d b e a f c g
+// sort3(a); d e b f g c a
+
+// 前序遍历结果
+const arr1 = ['a', 'b', 'd', 'e', 'c', 'f', 'g'];
+// 中序遍历结果
+const arr2 = ['d', 'b', 'e', 'a', 'f', 'c', 'g'];
+// 后序遍历结果
+const arr3 = ['d', 'e', 'b', 'f', 'g', 'c', 'a'];
+
+/**
+ * 根据前序遍历和后续遍历的结果还原二叉树
+ * @param {*} arr1 
+ * @param {*} arr2 
+ */
+function test(arr1, arr2) {
+    // 严谨性判断
+    if(!arr1 || !arr2 || arr1.length === 0 || arr2.length === 0 || arr1.length !== arr2.length){
+        return null;
+    }
+    const root = new Node(arr1[0]);
+    const index = arr2.indexOf(arr1[0]);
+    const arr2Left = arr2.slice(0, index);
+    const arr2Right = arr2.slice(index + 1);
+    const arr1Left = arr1.slice(1, arr2Left.length + 1);
+    const arr1Right = arr1.slice(arr1Left.length + 1);
+    root.left = test(arr1Left, arr2Left);
+    root.right = test(arr1Right, arr2Right);
+    return root;
+}
+/**
+ * 根据后序遍历和后续遍历的结果还原二叉树
+ * @param {*} arr1 
+ * @param {*} arr2 
+ */
+function test2(arr1, arr2) {
+    // 严谨性判断
+    if(!arr1 || !arr2 || arr1.length === 0 || arr2.length === 0 || arr1.length !== arr2.length){
+        return null;
+    }
+    const root = new Node(arr1[arr1.length - 1]);
+    const index = arr2.indexOf(arr1[arr1.length - 1]);
+    const arr2Left = arr2.slice(0, index);
+    const arr2Right = arr2.slice(index + 1);
+    const arr1Left = arr1.slice(0, arr2Left.length);
+    const arr1Right = arr1.slice(arr1Left.length, -1);
+    root.left = test2(arr1Left, arr2Left);
+    root.right = test2(arr1Right, arr2Right);
+    return root;
+}
+console.log(test2(arr3,arr2));
