@@ -1,18 +1,11 @@
 const arr = [2, 4, 6, 1, 3, 5, 8, 9, 7];
 
-// 选择排序经过每一轮的比较会把当前最值交换到最后面
-// 冒泡排序每次比较都会交换，而选择排序是每次比较只记录最值的索引，比较完后每一轮只交换一次
-// 2,4,6,1,3,5,8,9,7
-
-/**
- * 比较
- * @param {*} a 
- * @param {*} b 
- */
-function compare(a, b) {
-    return a > b;
-}
-
+// 快速排序 首先选第一个元素为基准，建立两个指针，左指针指向第二个元素，右指针指向最后一个元素
+// 从左向右，寻找大于基准的元素，停止
+// 从右向左，寻找小于基准的元素，停止
+// 交换元素位置，指针接着运动，直到左指针大于右指针
+// 将基准元素与最终指针指向的元素进行交换
+// 以目前基准元素作为分隔，左侧和右侧数组继续之前的操作
 /**
  * 交换
  * @param {*} arr 
@@ -26,27 +19,41 @@ function exchange(arr, i, j) {
 }
 
 /**
- * 排序
+ * 排序 左闭右开
  * @param {*} arr 
+ * @param {*} begin 
+ * @param {*} end 
  */
-function selectSort(arr) {
-    if(!arr || arr.length <= 1){
+function quickSort(arr, begin, end) {
+    if (!arr || arr.length <= 1) {
         return;
     }
-    for (let i = 0; i < arr.length - 1; i++) {
-        // 将每次的最后一位作为key
-        let key = arr.length - i - 1;
-        for (let j = 0; j < arr.length - i - 1; j++) {
-            // 依次和key进行比较，满足条件则更新key
-            if (compare(arr[j], arr[key])) {
-                key = j;
-            }
-        }
-        if(key !== arr.length - i - 1){
-            exchange(arr, key, arr.length - i - 1);
-        }
+    // 子数组至少有两项
+    if (end - begin <= 1) {
+        return;
     }
+    const key = arr[begin];
+    let left = begin;
+    let right = end;
+    do {
+        do left++;
+        while (left < right && arr[left] < key)
+        do right--;
+        while (left < right && arr[right] > key)
+        if (left < right) {
+            exchange(arr, left, right);
+        }
+    } while (left < right)
+    // 判断需要交换基准的位置
+    // 左右指针最终可能的情况，
+    // 相等：最后一次没找到可以交换的
+    // 不相等：最后一次找到可以交换的，交换后，left>right 或者是一次都没找到
+    const swapPoint = left === right ? right - 1 : right;
+    exchange(arr, begin, swapPoint);
+    quickSort(arr, begin, swapPoint);
+    quickSort(arr, swapPoint + 1, end);
+
 }
 
-selectSort(arr);
+quickSort(arr, 0, arr.length);
 console.log(arr);
