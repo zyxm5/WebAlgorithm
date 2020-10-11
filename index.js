@@ -20,18 +20,23 @@ c.left = f;
 c.right = g;
 
 /**
- * 深度优先搜索
- * @param {*} root 
+ * 广度优先搜索
+ * @param {*} rootList
  * @param {*} value 
  */
-function deepSearch(root, value){
-    if(!root || !value){
+function breadthSearch(rootList, value){
+    if(root == null || rootList.length == 0 || value == null){
         return;
     }
-    if(root.value === value){
-        return root;
+    const arr = [];
+    for(let i = 0; i < rootList.length; i++){
+        if(rootList[i] && rootList[i].value === value){
+            return rootList[i];
+        }
+        arr.push(rootList[i].left);
+        arr.push(rootList[i].right);
     }
-    return deepSearch(root.left, value) || deepSearch(root.right, value);
+    return breadthSearch(arr, value);
 }
 
-console.log(deepSearch(a, 'n'));
+console.log(breadthSearch([a], 'g'));
