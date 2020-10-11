@@ -30,15 +30,20 @@ function exchange(arr, i, j) {
  * @param {*} arr 
  */
 function selectSort(arr) {
+    if(!arr || arr.length <= 1){
+        return;
+    }
     for (let i = 0; i < arr.length - 1; i++) {
-        let key = -1;
+        // 将每次的最后一位作为key
+        let key = arr.length - i - 1;
         for (let j = 0; j < arr.length - i - 1; j++) {
-            if (compare(arr[j], arr[j + 1])) {
+            // 依次和key进行比较，满足条件则更新key
+            if (compare(arr[j], arr[key])) {
                 key = j;
             }
         }
-        if(key !== -1){
-            exchange(arr, key, arr.length - i);
+        if(key !== arr.length - i - 1){
+            exchange(arr, key, arr.length - i - 1);
         }
     }
 }
