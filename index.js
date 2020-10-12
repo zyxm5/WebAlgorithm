@@ -1,7 +1,6 @@
 function Node(value) {
     this.value = value;
-    this.left = null;
-    this.right = null;
+    this.neighbors = [];
 }
 
 const a = new Node('a');
@@ -9,64 +8,78 @@ const b = new Node('b');
 const c = new Node('c');
 const d = new Node('d');
 const e = new Node('e');
-const f = new Node('f');
-const g = new Node('g');
 
-a.left = b;
-a.right = c;
-b.left = d;
-b.right = e;
-c.left = f;
-c.right = g;
+// 需要连接的节点
+const pointSet = [a, b, c, d, e];
+// 最大代价
+const max = 100000;
+// 各个节点连接的代价
+const distance = [
+    [0, 4, 7, max, max],
+    [4, 0, 8, 6, max],
+    [7, 8, 0, 5, max],
+    [max, 6, 5, 0, 7],
+    [max, max, max, 7, 0]
+]
 
-const a1 = new Node('a');
-const b1 = new Node('b');
-const c1 = new Node('c');
-const d1 = new Node('d');
-const e1 = new Node('e');
-const f1 = new Node('f');
-const g1 = new Node('g');
-
-a1.left = b1;
-a1.right = c1;
-b1.left = d1;
-b1.right = e1;
-c1.left = g1;
-c1.right = g1;
+function findIndex(pointSet, nowPoint){
+    for(let i = 0; i < pointSet.length; i ++){
+        if(pointSet[i].value === nowPoint.value){
+            return i;
+        }
+    }
+}
 
 /**
- * 
- * @param {*} root1 
- * @param {*} root2 
- * @param {*} diffList diff记录
+ * 返回以当前节点集合为起点的最小代价的终点
+ * @param {*} pointSet 
+ * @param {*} distance 
+ * @param {*} nowPointSet 
  */
-function diffTree(root1, root2, diffList) {
-    if (root1 == root2) {
-        return diffList;
-    } else if (root1 == null && root2) {
-        diffList.push({
-            type: '新增',
-            origin: null,
-            now: root2
-        })
-    } else if (root1 && root2 == null) {
-        diffList.push({
-            type: '删除',
-            origin: root1,
-            now: null
-        })
-    } else if (root1.value !== root2.value) {
-        diffList.push({
-            type: '修改',
-            origin: root1,
-            now: root2
-        });
-        diffTree(root1.left, root2.left, diffList);
-        diffTree(root1.right, root2.right, diffList);
+function getMinDisPoint(pointSet, distance, nowPointSet){
+    // 当前起点
+    let fromPoint = null;
+    // 最小代价终点
+    let minDisPoint = null;
+    // 当前需要花费的最小代价
+    let minDis = max;
+    // 遍历当前节点集合
+    for(let i = 0;i < nowPointSet.length; i++){
+        fromPoint = nowPointSet[i];
+        // 找到以当前节点为起点的所有终点所需的代价
+        const index = findIndex(pointSet, nowPointSet[i]);
+        // 遍历代价，找到最小代价
+        for(let j = 0; j < distance[index].length; j ++){
+            // 该节点不在当前节点中且代价最小
+            if(nowPointSet.indexOf(pointSet[j]) < 0 && distance[index][j] < minDis){
+                minDis = distance[index][j];
+                minDisPoint = pointSet[j];
+            }
+        }
     }
-    diffTree(root1.left, root2.left, diffList);
-    diffTree(root1.right, root2.right, diffList);
+    fromPoint.neighbors.push(minDisPoint);
+    minDisPoint.neighbors.push(fromPoint);
+    return minDisPoint;
 }
-const diffList = [];
-diffTree(a, a1, diffList);
-console.log(diffList);
+
+/**
+ * 返回代价最少的节点连接-普利姆算法(加点法)
+ * @param {*} pointSet 
+ * @param {*} distance 
+ * @param {*} start 
+ */
+function prim(pointSet, distance, start){
+    const nowPointSet = [];
+    nowPointSet.push(start);
+    while(true){
+        const minDisPoint = getMinDisPoint(pointSet, distance, nowPointSet);
+        nowPointSet.push(minDisPoint);
+        if(nowPointSet.length === pointSet.length){
+            break;
+        }
+    }
+    return nowPointSet;
+}
+
+console.log(prim(pointSet, distance, pointSet[0]));
+
