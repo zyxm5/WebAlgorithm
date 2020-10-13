@@ -1,85 +1,149 @@
+// 问题: 有10000个数,判断某一个数是否在这10000个数中?
+// 要求:尽可能性能高
+
+const arr = [];
+for (let i = 0; i < 6; i++) {
+    arr[i] = Math.floor(Math.random() * 10000);
+}
+
+// 记录查询的次数
+let searchNum = 0;
+
+/**
+ * 普通查询
+ * @param {*} arr   
+ * @param {*} value 
+ */
+function search(arr, value) {
+    for (let i = 0; i < arr.length; i++) {
+        searchNum++;
+        if (arr[i] === value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * 节点
+ * @param {*} value 
+ */
 function Node(value) {
     this.value = value;
-    this.neighbors = [];
+    this.left = null;
+    this.right = null;
 }
 
-const a = new Node('a');
-const b = new Node('b');
-const c = new Node('c');
-const d = new Node('d');
-const e = new Node('e');
-
-// 需要连接的节点
-const pointSet = [a, b, c, d, e];
-// 最大代价
-const max = 100000;
-// 各个节点连接的代价
-const distance = [
-    [0, 4, 7, max, max],
-    [4, 0, 8, 6, max],
-    [7, 8, 0, 5, max],
-    [max, 6, 5, 0, 7],
-    [max, max, max, 7, 0]
-]
-
-function findIndex(pointSet, nowPoint){
-    for(let i = 0; i < pointSet.length; i ++){
-        if(pointSet[i].value === nowPoint.value){
-            return i;
+/**
+ * 构建根节点
+ * @param {*} root 
+ * @param {*} value 
+ */
+function buildRoot(root, value) {
+    if (root == null) {
+        return;
+    }
+    // 节点中不需要已经存在的值
+    if (value == root.value) {
+        return
+    } else if (value > root.value) {
+        // 大于的放在右子树
+        if (root.right == null) {
+            root.right = new Node(value);
+        } else {
+            // 如果子树存在,则递归进行构建
+            buildRoot(root.right, value)
+        }
+    } else {
+        // 小于的放在左子树
+        if (root.left == null) {
+            root.left = new Node(value);
+        } else {
+            // 如果子树存在,则递归进行构建
+            buildRoot(root.left, value)
         }
     }
 }
 
 /**
- * 返回以当前节点集合为起点的最小代价的终点
- * @param {*} pointSet 
- * @param {*} distance 
- * @param {*} nowPointSet 
+ * 构建二叉搜索树-左子树的节点值都比当前节点的值小,右子树的节点值都比当前节点的值大
+ * @param {*} arr 
  */
-function getMinDisPoint(pointSet, distance, nowPointSet){
-    // 当前起点
-    let fromPoint = null;
-    // 最小代价终点
-    let minDisPoint = null;
-    // 当前需要花费的最小代价
-    let minDis = max;
-    // 遍历当前节点集合
-    for(let i = 0;i < nowPointSet.length; i++){
-        fromPoint = nowPointSet[i];
-        // 找到以当前节点为起点的所有终点所需的代价
-        const index = findIndex(pointSet, nowPointSet[i]);
-        // 遍历代价，找到最小代价
-        for(let j = 0; j < distance[index].length; j ++){
-            // 该节点不在当前节点中且代价最小
-            if(nowPointSet.indexOf(pointSet[j]) < 0 && distance[index][j] < minDis){
-                minDis = distance[index][j];
-                minDisPoint = pointSet[j];
-            }
-        }
+function buildTree(arr) {
+    // 严谨性判断
+    if (arr == null || arr.length == 0) {
+        return null;
     }
-    fromPoint.neighbors.push(minDisPoint);
-    minDisPoint.neighbors.push(fromPoint);
-    return minDisPoint;
+    // 默认选取第一个元素为根节点
+    const root = new Node(arr[0]);
+    // 根据根节点和其他节点的比较关系进行构建
+    for (let i = 1; i < arr.length; i++) {
+        buildRoot(root, arr[i]);
+    }
+    return root;
 }
 
 /**
- * 返回代价最少的节点连接-普利姆算法(加点法)
- * @param {*} pointSet 
- * @param {*} distance 
- * @param {*} start 
+ * 在二叉搜索数中查找
+ * @param {*} root 
+ * @param {*} target 
  */
-function prim(pointSet, distance, start){
-    const nowPointSet = [];
-    nowPointSet.push(start);
-    while(true){
-        const minDisPoint = getMinDisPoint(pointSet, distance, nowPointSet);
-        nowPointSet.push(minDisPoint);
-        if(nowPointSet.length === pointSet.length){
-            break;
-        }
+function treeSearch(root, target) {
+    searchNum++;
+    if (root == null) {
+        return false;
     }
-    return nowPointSet;
+    if (target === root.value) {
+        return true
+    } else if (target > root.value) {
+        // 大于则直接在右子树中查找
+        return treeSearch(root.right, target);
+    } else {
+        // 小于在左子树中查找
+        return treeSearch(root.left, target);
+    }
 }
 
-console.log(prim(pointSet, distance, pointSet[0]));
+/**
+ * 计算子树的深度
+ * @param {*} root 
+ */
+function countDepth(root) {
+    if (root == null) {
+        return 0
+    }
+    let depth = 0;
+    // 累加左右子树中深度较大的
+    const leftDepth = countDepth(root.left);
+    const rightDepth = countDepth(root.right);
+    depth += Math.max(leftDepth, rightDepth) + 1;
+    console.log(depth);
+    return depth;
+}
 
+/**
+ * 判断一个二叉树是否是平衡二叉树
+ * @param {*} root 
+ */
+function isBalanceTree(root) {
+    // 严谨性判断
+    if (root == null) {
+        // 姑且认为是true吧
+        return true;
+    }
+    // 记录左子树深度
+    const leftDepth = countDepth(root.left);
+    // 记录右子树深度
+    const rightDepth = countDepth(root.right);
+    // console.log(leftDepth, rightDepth);
+    if (Math.abs(leftDepth - rightDepth) > 1) {
+        return false;
+    }
+    return isBalanceTree(root.left) && isBalanceTree(root.right);
+}
+
+const root = buildTree(arr);
+console.log(root);
+// console.log(treeSearch(root, 1000));
+// console.log(searchNum);
+console.log(isBalanceTree(root));
