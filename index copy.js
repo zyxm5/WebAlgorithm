@@ -13,8 +13,8 @@ const f = new Node('f');
 a.children.push(b);
 a.children.push(c);
 a.children.push(d);
-b.children.push(e);
 b.children.push(f);
+b.children.push(e);
 
 /**
  * 树的深度优先搜索
@@ -28,10 +28,14 @@ function deepSearch(root, value){
     if(root.value == value){
         return true;
     }
+    let result = false;
     for(let i = 0 ; i < root.children.length; i ++){
-        return deepSearch(root.children[i], value);
+        result = deepSearch(root.children[i], value);
+        if(result){
+            break;
+        }
     }
-    return false;
+    return result;
 }
 
-console.log(deepSearch(a, 'e'));
+console.log(deepSearch(a, 'f'));

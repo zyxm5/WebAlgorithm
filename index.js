@@ -25,8 +25,8 @@ c.right = g;
  * @param {*} value 
  */
 function deepSearch(root, value){
-    if(!root || !value){
-        return;
+    if(root == null){
+        return false;
     }
     if(root.value === value){
         return root;
