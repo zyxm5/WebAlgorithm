@@ -20,7 +20,7 @@ c.left = f;
 c.right = g;
 
 /**
- * 深度优先搜索
+ * 二叉树的深度优先搜索
  * @param {*} root 
  * @param {*} value 
  */
