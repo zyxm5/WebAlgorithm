@@ -2,7 +2,7 @@
 // 要求:尽可能性能高
 
 const arr = [];
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 10000; i++) {
     arr[i] = Math.floor(Math.random() * 10000);
 }
 
@@ -117,7 +117,6 @@ function countDepth(root) {
     const leftDepth = countDepth(root.left);
     const rightDepth = countDepth(root.right);
     depth += Math.max(leftDepth, rightDepth) + 1;
-    console.log(depth);
     return depth;
 }
 
@@ -142,8 +141,102 @@ function isBalanceTree(root) {
     return isBalanceTree(root.left) && isBalanceTree(root.right);
 }
 
+/**
+ * 左旋转
+ * @param {*} root 
+ */
+function leftRotate(root) {
+    // 旋转节点: 当前根节点
+    // 新根: 旋转节点的右孩子
+    const newRoot = root.right;
+    // 变化分支: 新根的左子树
+    const changeTree = newRoot.left;
+    // 不变分支: 新根的右子树
+
+    // 操作步骤
+    // 新根的左孩子为旋转节点
+    newRoot.left = root;
+    // 旋转节点的右孩子为变化分支
+    root.right = changeTree;
+    return newRoot;
+}
+
+function rightRotate(root) {
+    // 旋转节点: 当前根节点
+    // 新根: 旋转节点的左孩子
+    const newRoot = root.left;
+    // 变化分支: 新根的右子树
+    const changeTree = newRoot.right;
+    // 不变分支: 新根的左子树
+    // 操作步骤
+    // 新根的右孩子为旋转节点
+    newRoot.right = root;
+    // 旋转节点的左孩子为变化分支
+    root.left = changeTree;
+    return newRoot;
+}
+/**
+ * 将一个非平衡二叉树转换为平衡二叉树
+ * @param {*} root 
+ */
+function change(root) {
+    if (root == null) {
+        return;
+    }
+    // 如果已经是平衡二叉树了,直接返回
+    if (isBalanceTree(root)) {
+        return root;
+    }
+    // 按照后续遍历的顺序,从底层往高层进行
+    if (root.left) {
+        root.left = change(root.left);
+    }
+    if (root.right) {
+        root.right = change(root.right);
+    }
+    // 根据左右子树的深度,判断进行左单旋还是右单旋
+    const leftDepth = countDepth(root.left);
+    const rightDepth = countDepth(root.right);
+    if (Math.abs(leftDepth - rightDepth) > 1) {
+        if (leftDepth > rightDepth) {
+            // 进行右单旋
+            // 当变化分支是唯一最深分支时,需要进行双旋,先旋转节点左单旋,再节点右单旋
+            const changeTreeDepth = countDepth(root.left.right);
+            const leftTreeDepth = countDepth(root.left.left);
+            if(changeTreeDepth > leftTreeDepth){
+                root.left = leftRotate(root.left);
+            }
+            root = rightRotate(root);
+        } else {
+            // 进行左单旋
+            // 当变化分支是唯一最深分支时,需要进行双旋,先旋转节点右单旋,再节点左单旋
+            const changeTreeDepth = countDepth(root.right.left);
+            const rightTreeDepth = countDepth(root.right.right);
+            if(changeTreeDepth > rightTreeDepth){
+                root.right = rightRotate(root.right);
+            }
+            root =leftRotate(root);
+        }
+    }
+    return root;
+}
+
+const node8 = new Node(8);
+const node7 = new Node(7);
+const node6 = new Node(6);
+const node5 = new Node(5);
+const node2 = new Node(2);
+
+node8.left = node7;
+node7.left = node6;
+node6.left = node5;
+node5.left = node2;
+
 const root = buildTree(arr);
-console.log(root);
-// console.log(treeSearch(root, 1000));
-// console.log(searchNum);
-console.log(isBalanceTree(root));
+// console.log(root);
+console.log(treeSearch(root, 1000));
+console.log(searchNum);
+searchNum = 0;
+console.log(treeSearch(change(root), 1000));
+console.log(searchNum);
+// console.log(leftRotate(node2));
