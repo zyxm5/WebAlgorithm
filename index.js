@@ -1,42 +1,49 @@
-function Node(value) {
-    this.value = value;
-    this.left = null;
-    this.right = null;
-}
-
-const a = new Node('a');
-const b = new Node('b');
-const c = new Node('c');
-const d = new Node('d');
-const e = new Node('e');
-const f = new Node('f');
-const g = new Node('g');
-
-a.left = b;
-a.right = c;
-b.left = d;
-b.right = e;
-c.left = f;
-c.right = g;
+// 0, 1, 1, 2, 3, 5, 8, 13, 21 ...
+// 返回第n位的值
 
 /**
- * 二叉树广度优先搜索
- * @param {*} rootList
- * @param {*} value 
+ * 常规
+ * @param {*} n 
  */
-function breadthSearch(rootList, value){
-    if(rootList == null || rootList.length == 0 || value == null){
-        return;
+function fibo(n){
+    // 严谨性判断
+    if(n <= 0){
+        return -1;
     }
-    const arr = [];
-    for(let i = 0; i < rootList.length; i++){
-        if(rootList[i] && rootList[i].value === value){
-            return rootList[i];
-        }
-        arr.push(rootList[i].left);
-        arr.push(rootList[i].right);
+    if(n === 1){
+        return 0;
     }
-    return breadthSearch(arr, value);
+    if(n === 2){
+        return 1;
+    }
+    let a = 0;
+    let b = 1;
+    let c;
+    for(let i = 3; i <= n; i++){
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return c;
 }
 
-console.log(breadthSearch([a], 'g'));
+// 通式 f(n) = f(n - 1) + f(n - 2)
+/**
+ * 动态规划
+ * @param {*} n 
+ */
+function fibo2(n){
+    // 严谨性判断
+    if(n <= 0){
+        return -1;
+    }
+    if(n === 1){
+        return 0;
+    }
+    if(n === 2){
+        return 1;
+    }
+    return fibo2(n - 1) + fibo2(n - 2);
+}
+console.log(fibo(6));
+console.log(fibo2(6));
