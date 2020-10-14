@@ -207,6 +207,10 @@ function change(root) {
                 root.left = leftRotate(root.left);
             }
             root = rightRotate(root);
+            // 如果变化分支的高度比旋转节点的另一侧的高度差距>=2,单旋过后可能仍然不平衡
+            root.right = change(root.right);
+            // 另一侧高度发生变化后可能会影响整体的平衡,所以对root再次进行change
+            root = change(root);
         } else {
             // 进行左单旋
             // 当变化分支是唯一最深分支时,需要进行双旋,先旋转节点右单旋,再节点左单旋
@@ -215,7 +219,10 @@ function change(root) {
             if(changeTreeDepth > rightTreeDepth){
                 root.right = rightRotate(root.right);
             }
-            root =leftRotate(root);
+            root = leftRotate(root);
+            // 同上
+            root.left = change(root.left);
+            root = change(root);
         }
     }
     return root;
@@ -234,9 +241,11 @@ node5.left = node2;
 
 const root = buildTree(arr);
 // console.log(root);
-console.log(treeSearch(root, 1000));
+treeSearch(root, 1000);
 console.log(searchNum);
 searchNum = 0;
-console.log(treeSearch(change(root), 1000));
+const newRoot = change(root);
+treeSearch(newRoot, 1000);
 console.log(searchNum);
+console.log(isBalanceTree(newRoot));
 // console.log(leftRotate(node2));
