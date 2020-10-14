@@ -1,7 +1,6 @@
 function Node(value) {
     this.value = value;
-    this.left = null;
-    this.right = null;
+    this.children = [];
 }
 
 const a = new Node('a');
@@ -10,33 +9,31 @@ const c = new Node('c');
 const d = new Node('d');
 const e = new Node('e');
 const f = new Node('f');
-const g = new Node('g');
 
-a.left = b;
-a.right = c;
-b.left = d;
-b.right = e;
-c.left = f;
-c.right = g;
+a.children.push(b);
+a.children.push(c);
+a.children.push(d);
+c.children.push(e);
+c.children.push(f);
+
 
 /**
- * 二叉树广度优先搜索
+ * 普通树的广度优先搜索
  * @param {*} rootList
  * @param {*} value 
  */
 function breadthSearch(rootList, value){
-    if(rootList == null || rootList.length == 0 || value == null){
-        return;
+    if(rootList == null || rootList.length == 0){
+        return false;
     }
-    const arr = [];
+    let arr = [];
     for(let i = 0; i < rootList.length; i++){
         if(rootList[i] && rootList[i].value === value){
-            return rootList[i];
+            return true;
         }
-        arr.push(rootList[i].left);
-        arr.push(rootList[i].right);
+        arr = arr.concat(rootList[i].children);
     }
     return breadthSearch(arr, value);
 }
 
-console.log(breadthSearch([a], 'g'));
+console.log(breadthSearch([a], 'f'));
