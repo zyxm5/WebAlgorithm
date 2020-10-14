@@ -1,49 +1,25 @@
-// 0, 1, 1, 2, 3, 5, 8, 13, 21 ...
-// 返回第n位的值
+// 青蛙一次只能跳一个台阶或者两个台阶
+// 问:青蛙跳上n级台阶有多少种办法?
 
-/**
- * 常规
- * @param {*} n 
- */
-function fibo(n){
+// 青蛙跳上n级台阶前,可能跳了一个台阶或者两个台阶
+// 所以该问题可以分解为
+// 青蛙跳上n-1级台阶和n-2级台阶有多少种办法
+
+// n-1再次分解 = (n-2) + (n-3);
+
+// 通式:f(n) = f(n-1) + f(n-2); 与斐波那契数列一致
+
+function jump(n){
     // 严谨性判断
     if(n <= 0){
         return -1;
     }
-    if(n === 1){
-        return 0;
-    }
-    if(n === 2){
+    if(n == 1){
         return 1;
     }
-    let a = 0;
-    let b = 1;
-    let c;
-    for(let i = 3; i <= n; i++){
-        c = a + b;
-        a = b;
-        b = c;
+    if(n == 2){
+        // 跳两次一个台阶或者一次两个台阶
+        return 2;
     }
-    return c;
+    return jump(n - 1) + jump(n - 2);
 }
-
-// 通式 f(n) = f(n - 1) + f(n - 2)
-/**
- * 动态规划
- * @param {*} n 
- */
-function fibo2(n){
-    // 严谨性判断
-    if(n <= 0){
-        return -1;
-    }
-    if(n === 1){
-        return 0;
-    }
-    if(n === 2){
-        return 1;
-    }
-    return fibo2(n - 1) + fibo2(n - 2);
-}
-console.log(fibo(6));
-console.log(fibo2(6));
