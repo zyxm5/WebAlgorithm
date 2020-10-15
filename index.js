@@ -29,7 +29,7 @@ function exchange(arr, i, j) {
  * @param {*} arr 
  */
 function bubbleSort(arr) {
-    if(!arr || arr.length <= 1) {
+    if (arr == null || arr.length == 0) {
         return;
     }
     for (let i = 0; i < arr.length - 1; i++) {
