@@ -1,6 +1,94 @@
-function Node(value) {
+function Node(value){
     this.value = value;
     this.next = null;
+}
+
+/**
+ * 获取链表的长度
+ */
+Node.prototype.getLength = function(){
+    if(this.next == null){
+        return 1;
+    }
+    return 1 + this.next.getLength();
+}
+
+/**
+ * 根据下标获取元素中存放的数据
+ */
+Node.prototype.get = function(index){
+    if(index < 0){
+        return;
+    }
+    if(index == 0){
+        return this.value;
+    }
+    return this.next.get(--index);
+}
+
+/**
+ * 根据下标设置元素中存放的数据
+ */
+Node.prototype.set = function(index, value){
+    if(index < 0){
+        return;
+    }
+    if(index == 0){
+        this.value = value;
+    }
+    return this.next.set(--index, value);
+}
+
+/**
+ * 在链表的某一个节点后面加入新的节点
+ */
+Node.prototype.insertAfter = function(originNode, value){
+    const newNode = new Node(value);
+    newNode.next = originNode.next;
+    originNode.next = newNode;
+}
+
+/**
+ * 在链表末尾加入一个新节点
+ */
+Node.prototype.push = function(value){
+    if(this.next == null){
+        this.next = new Node(value);
+    }else{
+        this.next.push(value);
+    }
+}
+
+/**
+ * 删除一个节点
+ */
+Node.prototype.remove = function(value){
+    if(this.next == null){
+        return;
+    }
+    if(this.next.value == value){
+        this.next = this.next.next;
+    }else{
+        this.next.remove(value);
+    }
+}
+
+/**
+ * 链表的逆序
+ */
+Node.prototype.reverse = function(){
+    let root = this;
+    if(root.next == null){
+        return;
+    }
+    if(root.next.next == null){
+        root.next.next = root;
+        return root.next;
+    }
+    const result = root.next.reverse();
+    root.next.next = root;
+    root.next = null;
+    return result;
 }
 
 const a = new Node('a');
@@ -15,34 +103,27 @@ c.next = d;
 d.next = e;
 
 /**
- * 逆置链表
+ * 遍历链表
  * @param {*} root 
  */
-function niZhi(root){
+function bianli(root){
     if(root == null){
         return;
     }
-    // 如果只有一个节点，直接返回该节点
-    if(pHead.next == null){
-        return pHead;
-    }
-    // 取出倒数第二项
-    if(root.next.next == null){
-        // 将最后一项的next赋值为倒数第二项
-        root.next.next = root;
-        // 返回最后一项
-        return root.next;
-        // root.next = null;
-    }
-    // 其他项
-    const result = niZhi(root.next);
-    // 下一项的next赋值为该项
-    root.next.next = root;
-    // 该项的next赋值为null
-    root.next = null;
-    return result;
+    console.log(root.value);
+    bianli(root.next);
 }
 
-const last = niZhi(a);
-console.log(last);
-
+// bianli(a);
+// console.log(c.getLength());
+// console.log(a.get(3));
+// a.set(3, 'f');
+// console.log(a.get(3));
+const g = new Node('g');
+// a.insertAfter(c, g);
+// console.log(c);
+// a.push(g);
+// console.log(d);
+a.remove('c');
+console.log(a);
+// console.log(a.reverse());
