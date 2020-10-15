@@ -22,6 +22,10 @@ function niZhi(root){
     if(root == null){
         return;
     }
+    // 如果只有一个节点，直接返回该节点
+    if(pHead.next == null){
+        return pHead;
+    }
     // 取出倒数第二项
     if(root.next.next == null){
         // 将最后一项的next赋值为倒数第二项
