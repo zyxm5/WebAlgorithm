@@ -19,41 +19,55 @@ function exchange(arr, i, j) {
 }
 
 /**
- * 排序 左闭右开
+ * 快速排序 左闭右开
  * @param {*} arr 
  * @param {*} begin 
  * @param {*} end 
  */
-function quickSort(arr, begin, end) {
-    if (!arr || arr.length <= 1) {
+function quickSort(arr, begin = 0, end = arr.length){
+    // 默认选择第一个元素为基准元素
+    // 设置两个指针,左指针从基准元素的后一个元素开始依次向后,右指针从最后一个元素开始依次向前
+    // 当左指针指向的元素大于基准元素时停止,当右指针指向的元素小于基准元素时停止
+    // 交换左右指针指向的元素
+    // 重复上述步骤,直到left < right 不成立为止
+    // 确定基准点 left == right ? right - 1 : right;
+    // 交换基准元素与基准点元素的位置
+    // 以基准元素为分割线,重复操作左侧和右侧的剩余元素
+    if(arr == null){
         return;
     }
-    // 子数组至少有两项
-    if (end - begin <= 1) {
+    // 至少包含两个元素
+    if(end - begin < 2){
         return;
     }
-    const key = arr[begin];
     let left = begin;
     let right = end;
-    do {
-        do left++;
-        while (left < right && arr[left] < key)
-        do right--;
-        while (left < right && arr[right] > key)
-        if (left < right) {
+    const base = arr[begin];
+    do{
+        do{
+            left++;
+        }
+        // 小于时指针接着向前走
+        while(left < right && arr[left] < base)
+        do{
+            right--;
+        }
+        // 大于时指针接着向前走
+        while(left < right && arr[right] > base)
+        if(left < right){
             exchange(arr, left, right);
         }
-    } while (left < right)
-    // 判断需要交换基准的位置
-    // 左右指针最终可能的情况，
-    // 相等：最后一次没找到可以交换的
-    // 不相等：最后一次找到可以交换的，交换后，left>right 或者是一次都没找到
-    const swapPoint = left === right ? right - 1 : right;
-    exchange(arr, begin, swapPoint);
-    quickSort(arr, begin, swapPoint);
-    quickSort(arr, swapPoint + 1, end);
-
+    }while(left < right)
+    // 确定分隔点
+    const point = left == right ? right - 1 : right;
+    if(point > begin){
+        exchange(arr, point, begin);
+    }
+    // 分别对分隔点两侧的元素进行快排
+    quickSort(arr, begin, point);
+    quickSort(arr, point + 1, end);
 }
 
-quickSort(arr, 0, arr.length);
+quickSort(arr);
+
 console.log(arr);
