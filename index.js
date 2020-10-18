@@ -32,6 +32,12 @@ function insertAfter(arr, i, j) {
     arr.splice(i, 0, temp);
 }
 
+function exchange(arr, i, j) {
+    const temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;;
+}
+
 /**
  * 排序
  * @param {*} arr 
@@ -42,22 +48,23 @@ function insertSort(arr) {
     }
     // 用与保存已经排好序的最大下标
     let point = -1;
-    function insert(index){
-        if(point === -1){
-            point = 0;
-        }else{
-            // 大于最大的直接push
-            if(arr[index] > arr[point]){
 
-            }else if(arr[index] < arr[0]){
+    function insert(index) {
+        if (point === -1) {
+            point = 0;
+        } else {
+            // 大于最大的直接push
+            if (arr[index] > arr[point]) {
+
+            } else if (arr[index] < arr[0]) {
                 // 小于最小的直接放在最小的前面
                 insertAfter(arr, 0, index);
-            }else{
+            } else {
                 // 在已经排好的部分中查找该放置的位置
                 let i = 0;
-                while(true){
+                while (true) {
                     // console.log(arr[i]);
-                    if(arr[index] > arr[i]  && arr[index] < arr[i + 1]){
+                    if (arr[index] > arr[i] && arr[index] < arr[i + 1]) {
                         insertAfter(arr, i + 1, index);
                         break;
                     }
@@ -71,6 +78,22 @@ function insertSort(arr) {
     for (let i = 0; i < arr.length; i++) {
         insert(i);
     }
+}
+
+function insertSort(arr) {
+    function _insertSort(index) {
+        if (arr == null || arr.length == 0 || index == arr.length) {
+            return;
+        }
+        for (let i = 0; i < index; i++) {
+            if (arr[index] < arr[i]) {
+                exchange(arr, index, i);
+            }
+        }
+        index++;
+        _insertSort(index);
+    }
+    _insertSort(1);
 }
 
 insertSort(arr);
