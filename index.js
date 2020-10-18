@@ -68,6 +68,38 @@ function quickSort(arr, begin = 0, end = arr.length){
     quickSort(arr, point + 1, end);
 }
 
+/**
+ * 快速排序,填坑法
+ * @param {*} arr 
+ */
+function quickSort(arr){
+    function _quickSort(begin, end){
+        if(arr == null || arr.length == 0 || end - begin <= 1){
+            return;
+        }
+        // 默认将第一个元素作为基准点
+        const base = arr[begin];
+        let left = begin;
+        let right = end;
+        while(left < right){
+            // 右指针向前移动,直到碰到小于基准的元素
+            while(left < right && arr[right] > base){
+                right --;
+            }
+            arr[left] = arr[right];
+            // 左指针向后移动,直到碰到大于基准的元素
+            while(left < right && arr[left] < base){
+                left ++;
+            }
+            arr[right] = arr[left]; 
+        }
+        arr[left] = base;
+        _quickSort(begin, left - 1);
+        _quickSort(left + 1, end);
+    }
+    _quickSort(0, arr.length - 1);
+}
+
 quickSort(arr);
 
 console.log(arr);
