@@ -1,78 +1,46 @@
-// 青蛙一次只能跳一个台阶或者两个台阶
-// 问:青蛙跳上n级台阶有多少种办法?
-
-// 青蛙跳上n级台阶前,可能跳了一个台阶或者两个台阶
-// 所以该问题可以分解为
-// 青蛙跳上n-1级台阶和n-2级台阶有多少种办法
-
-// n-1再次分解 = (n-2) + (n-3);
-
-// 通式:f(n) = f(n-1) + f(n-2); 与斐波那契数列一致
-
-/**
- * 普通青蛙跳
- * @param {*} n 
- */
-function jump(n) {
-    const cache = {};
-
-    function _jump(n) {
-        if (cache[n]) {
-            return cache[n];
+// 记录函数的执行次数
+let num = 0;
+function LCS(str1, str2){
+    // 如果字符串的第一个元素相同，那么这个元素必会进入最终的子序列中
+    // 如果不同
+    // 比较去掉第一个元素的str1和str2的LCS的结果和str1和去掉第一个元素的str2的LSC的结果
+    // 取更长的一个
+    const cache = [];
+    function _LCS(str1, str2){
+        if(str1 === '' || str2 === ''){
+            return '';
         }
-        let result;
-        // 严谨性判断
-        if (n <= 0) {
-            result = -1;
-        } else if (n == 1) {
-            result = 1;
-        } else if (n == 2) {
-            // 跳两次一个台阶或者一次两个台阶
-            result = 2;
-        } else {
-            result = _jump(n - 1) + _jump(n - 2);
-        }
-        cache[n] = result;
-        return result;
-    }
-    return _jump(n);
-}
-
-// 变态青蛙跳台阶问题
-// 青蛙一次只能跳一个台阶或者两个台阶或者n个台阶
-// 问:青蛙跳上n级台阶有多少种办法?
-
-// 同上,推理得通式:f(n) = f(n - 1) + f(n - 2) + ... + f(2) + f(1) + 1;
-// 最后的1代表一次跳上n级台阶
-
-function jump2(n) {
-    const cache = {};
-
-    function _jump(n) {
-        if (cache[n]) {
-            return cache[n];
-        }
-        let result;
-        // 严谨性判断
-        if (n <= 0) {
-            result = -1;
-        } else
-        if (n == 1) {
-            result = 1;
-        } else
-        if (n == 2) {
-            // 跳两次一个台阶或者一次两个台阶
-            result = 2;
-        } else {
-            result = 1; // 代表一次性跳上去
-            for (let i = 1; i < n; i++) {
-                result += _jump(i);
+        num++;
+        // foreach能结束函数
+        // cache.forEach(e => {
+        //     if(e.str1 === str1 && e.str2 === str2){
+        //         return e.result;
+        //     }
+        // })
+        for(let i = 0; i < cache.length; i++){
+            if(cache[i].str1 === str1 && cache[i].str2 === str2){
+                return cache[i].result;
             }
         }
-        cache[n] = result;
+        let result;
+        if(str1[0] === str2[0]){
+            result = str1[0] + _LCS(str1.slice(1), str2.slice(1));
+        }else{
+            const lcs1 = _LCS(str1.slice(1), str2);
+            const lcs2 = _LCS(str1, str2.slice(1));
+            result = lcs1.length > lcs2.length ? lcs1 : lcs2;
+        }
+        cache.push({
+            str1,
+            str2,
+            result
+        })
         return result;
     }
-    return _jump(n);
+    const result = _LCS(str1, str2);
+    console.log(cache);
+    return result;
 }
 
-console.log(jump2(4));
+console.log(LCS('邓哥特有的贵族气质吸引了很多女孩', '邓哥喜欢吃秋葵和香菜，但是他的女朋友们不喜欢'));
+console.log(num);
