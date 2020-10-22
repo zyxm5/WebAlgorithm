@@ -80,6 +80,88 @@ function change(total, denos){
     console.log(cache);
     return result;
 }
+let num = 0;
+/**
+ * 背包问题，给定背包容量和物品，怎样能保证背包中放入的物品价值最高，每个物品只能装一次
+ * @param {*} total 
+ * @param {*} objects 
+ */
+function package(total, objects){
+    const cache = [];
+    function _package(total, index){
+        num++;
+        if(total === 0 || objects.length === 0 || !objects[index]){
+            return [];
+        }
+        if(total < 0 || !objects){
+            return false;
+        }
+        for(let i = 0; i < cache.length; i ++){
+            if(cache[i].total === total && cache[i].index === index){
+                return cache[i].result;
+            }
+        }
+        // 判断当前背包还能否装下第一个物品
+        // 如果不行，装入后续物品
+        // 如果可以，考虑是否要装该物品，最终将背包中价值高的返回
+        const obj = objects[index];
+        let result;
+        if(total < obj.weight){
+            result = _package(total, index + 1);
+        }else{
+            // 装入背包
+            let result1 = _package(total - obj.weight, index + 1);
+            // 不装
+            const result2 = _package(total, index + 1);
+            if(result1 === false && result2 === false){
+                //无解
+                result = false;
+            }else if(result1 === false && result2 !== false){
+                result = result2;
+            }else if(result1 !== false && result2 === false){
+                result = [obj].concat(result1);
+            }else{
+                result1 = [obj].concat(result1);
+                const total1 = result1.reduce((prev, next) => prev += next.price, 0);
+                const total2 = result2.reduce((prev, next) => prev += next.price, 0);
+                result = total1 > total2 ? result1 : result2;
+            }
+        }
+        cache.push({
+            total,
+            index,
+            result
+        })
+        return result;
+    }
+    const result = _package(total, 0);
+    console.log(cache);
+    return result;
+}
 
 // console.log(change(46, [25, 10, 5, 1]));
-console.log(change(51, [30, 25, 10, 1])); // [ 30, 10, 10, 1 ]，但最优解其实是[25,25,1]
+// console.log(change(51, [30, 25, 10, 1])); // [ 30, 10, 10, 1 ]，但最优解其实是[25,25,1]
+
+console.log(package(150, [
+    {
+        weight: 10,
+        price: 100
+    },
+    {
+        weight: 50,
+        price: 150
+    },
+    {
+        weight: 20,
+        price: 50
+    },
+    {
+        weight: 40,
+        price: 40
+    },
+    {
+        weight: 30,
+        price: 50
+    }
+]));
+console.log(num);
